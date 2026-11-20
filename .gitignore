@@ -1,8 +1,3 @@
-# dependencies and builds
-node_modules/
-site/dist/
-.vercel/
-
 # secrets: keys, vouchers and env files never go into git
 .env
 .env.*
