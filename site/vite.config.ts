@@ -36,7 +36,8 @@ function localApi(): Plugin {
 // (adam-bouafia.github.io/rackbench/) and from any local folder.
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  for (const k of ['AI_GATEWAY_API_KEY', 'ASSISTANT_MODEL']) if (env[k]) process.env[k] = env[k]
+  // VERCEL_OIDC_TOKEN comes from `vercel link` or `vercel env pull` and lets the assistant use the AI Gateway without a key.
+  for (const k of ['AI_GATEWAY_API_KEY', 'VERCEL_OIDC_TOKEN', 'ASSISTANT_MODEL']) if (env[k]) process.env[k] = env[k]
   return {
     plugins: [localApi()],
     // JSX with the automatic runtime (React 17+), no plugin needed. Fast Refresh is not set up:
