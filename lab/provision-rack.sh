@@ -19,6 +19,9 @@ MEM=${MEM:-1536}                              # MB, split evenly over the two NU
 BIOS_VERSION=1.4                              # the golden BIOS in bom.yaml; ./fw.sh changes it later
 BIOS_DATE=10/01/2026
 NODES=(rk-n1:11 rk-n2:12 rk-n3:13)
+# Test tools installed in every node by cloud-init
+PKGS="stress-ng fio iperf3 memtester lshw pciutils dmidecode numactl nvme-cli smartmontools sysstat ethtool jq chrony"
+PKGS_YAML=${PKGS// /, }
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 
@@ -108,10 +111,17 @@ users:
     ssh_authorized_keys:
       - $PUBKEY
 ssh_pwauth: false
+# The NAT network has no IPv6, and the network can still be settling when cloud-init starts:
+# use IPv4, retry, and only report "provisioned" when the test tools are really installed.
+apt:
+  conf: |
+    Acquire::ForceIPv4 "true";
+    Acquire::Retries "5";
 package_update: true
-packages: [stress-ng, fio, iperf3, memtester, lshw, pciutils, dmidecode, numactl, nvme-cli, smartmontools, sysstat, ethtool, jq, chrony]
+packages: [$PKGS_YAML]
 runcmd:
-  - touch /root/.provisioned
+  - [sh, -c, 'for i in 1 2 3 4 5 6; do command -v fio && command -v stress-ng && command -v iperf3 && command -v memtester && break; sleep 20; apt-get update -q && DEBIAN_FRONTEND=noninteractive apt-get install -y -q $PKGS; done >/dev/null 2>&1']
+  - [sh, -c, 'if command -v fio && command -v stress-ng && command -v iperf3 && command -v memtester; then touch /root/.provisioned; else touch /root/.provision-failed; fi >/dev/null']
 EOF
   printf 'instance-id: %s\nlocal-hostname: %s\n' "$NAME" "$NAME" > "$WORK/$NAME/meta-data"
   # Stable NIC names from the MAC address: mgmt0, be0, be1 (real servers do the same with udev or netplan).
@@ -158,8 +168,8 @@ cat <<'EOF'
 
 Wait until all three are ready:
   for h in rk-n1 rk-n2 rk-n3; do
-    until ssh "$h" 'test -f /root/.provisioned || sudo test -f /root/.provisioned' 2>/dev/null; do sleep 10; done
-    echo "$h ready"
+    until ssh "$h" 'sudo test -f /root/.provisioned -o -f /root/.provision-failed' 2>/dev/null; do sleep 10; done
+    ssh "$h" 'sudo test -f /root/.provisioned' && echo "$h ready" || echo "$h FAILED: ssh $h sudo tail -50 /var/log/cloud-init-output.log"
   done
 
 Then take the clean snapshot:

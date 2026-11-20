@@ -6,7 +6,7 @@
 #   ./pxe.sh rm       remove rk-pxe
 #
 # The rack-data network already hands out http://192.168.70.1:8080/boot.ipxe as the boot file.
-# Fedora's firewall blocks port 8080 from the VMs until you open it (runtime only, gone after a reboot):
+# If firewalld runs, it blocks port 8080 from the VMs until you open it (runtime only, gone after a reboot):
 #   sudo firewall-cmd --zone=libvirt --add-port=8080/tcp
 set -euo pipefail
 
@@ -20,9 +20,13 @@ VIRSH="virsh -c qemu:///system"
 case "${1:-}" in
   fetch)
     mkdir -p "$DATA"
+    # Resumes a partial download and skips files that are already complete (slow or flaky links).
     for f in vmlinuz-lts initramfs-lts modloop-lts; do
-      echo "==> $f"
-      curl -fL --progress-bar -o "$DATA/$f" "$ALPINE/$f"
+      want=$(curl -sIL "$ALPINE/$f" | tr -d '\r' | awk 'tolower($1) == "content-length:" {n = $2} END {print n + 0}')
+      have=$(stat -c %s "$DATA/$f" 2>/dev/null || echo 0)
+      if (( want > 0 && have == want )); then echo "==> $f already complete"; continue; fi
+      echo "==> $f ($((have / 1048576)) of $((want / 1048576)) MB here)"
+      curl -fL --retry 5 --retry-delay 5 -C - --progress-bar -o "$DATA/$f" "$ALPINE/$f"
     done
     cat > "$DATA/boot.ipxe" <<EOF
 #!ipxe
