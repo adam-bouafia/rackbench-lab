@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rackbench Explorer</title>
+    <meta name="description" content="An interactive guide to server racks: BMCs, IPMI and Redfish, network boot, burn-in, network tests and fault finding, built on a three-node rack that runs on a laptop." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <script>
+      try { var t = localStorage.getItem('rackbench:theme'); if (t) document.documentElement.dataset.theme = t } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Rackbench Explorer needs JavaScript: every lesson is an animated diagram you step through.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
