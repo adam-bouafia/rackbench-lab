@@ -1,0 +1,40 @@
+# Golden configuration ("bill of materials") of the mini rack.
+# A real rack test starts from the customer's BOM: every node must match it before any burn-in runs.
+# Your rack-validation-kit reads this file and fails the node that does not match.
+
+rack: rk-01
+# The asset list: which server (by serial number) belongs in which rack unit. Checking it catches a
+# server that was swapped or racked in the wrong position.
+nodes:
+  rk-n1: {rack_u: 10, serial: RL2611-011, mgmt_ip: 192.168.70.11, backend_ip: 10.70.0.11, bmc_port: 6231}
+  rk-n2: {rack_u: 11, serial: RL2611-012, mgmt_ip: 192.168.70.12, backend_ip: 10.70.0.12, bmc_port: 6232}
+  rk-n3: {rack_u: 12, serial: RL2611-013, mgmt_ip: 192.168.70.13, backend_ip: 10.70.0.13, bmc_port: 6233}
+
+expect:
+  system: {manufacturer: RackLab, product: RL-2S-1U}
+  board: {manufacturer: RackLab, product: RLB-2S}
+  bios: {vendor: RackLab, version: "1.4"}   # every node on the approved BIOS; ./fw.sh shows and changes it
+  sockets: 2
+  numa_nodes: 2
+  cpu_count: 2
+  memory_mb: 1536            # MemTotal is about 1450: allow about 8% for what the kernel reserves
+  disks:
+    vda: {size_gb: 10, role: os, serial_suffix: "-OS"}
+    vdb: {size_gb: 4, role: data, serial_suffix: "-DATA"}   # the only disk fio may write to
+  nics:
+    mgmt0: {mac_prefix: "52:54:00:70:00"}
+    be0:   {mac_prefix: "52:54:00:70:01"}
+    be1:   {mac_prefix: "52:54:00:70:02"}
+  backend_mtu: 9000          # after Lab 5
+  bond: {name: bond0, mode: active-backup, slaves: [be0, be1]}   # after Lab 5
+
+thresholds:
+  # Fill these in from your own first clean run (the baseline, Lab 4), then keep them.
+  fio_randread_4k_iops_min: null
+  fio_seqread_1m_mibs_min: null
+  stress_cpu_bogo_ops_min: null
+  iperf3_backend_gbits_min: null
+  link_flaps_max: 0          # carrier changes on any port during a test run
+  bond_failures_max: 0       # increase of the bond's Link Failure Count during a test run
+  stress_minutes: 10         # lab value; real burn-in runs for hours
+  outlier_pct: 15            # a node this far below the rack median fails, even above the minimum
