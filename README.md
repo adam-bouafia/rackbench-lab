@@ -6,6 +6,11 @@ Three Ubuntu nodes on KVM and libvirt that look like two-socket servers (serial 
 
 Every part is explained, step by step, in Rackbench Explorer: https://rackbench.vercel.app (source: https://github.com/adam-bouafia/rackbench-explorer).
 
+| | |
+|---|---|
+| ![Rackbench Explorer: powering on a server over IPMI, step by step](docs/screenshots/lesson.webp) | ![Rack Shift: reading burn-in results against the test plan](docs/screenshots/rackshift-burnin.webp) |
+| A lesson in Rackbench Explorer: IPMI power-on, packet by packet | Rack Shift, the game: build, cable, test and ship three racks |
+
 The workflow is the real one; the numbers are not. Not affiliated with any hardware vendor.
 
 ## Requirements
