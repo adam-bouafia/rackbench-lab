@@ -1,15 +1,15 @@
-# rackbench
+# rackbench-lab
 
-A small server rack on a laptop, for learning how racks are tested before they ship.
+The hands-on lab behind [Rackbench](https://rackbench.vercel.app) ([source](https://github.com/adam-bouafia/rackbench)): a small data center rack that runs on one Linux machine, for practising how racks are built, tested and repaired.
 
-Three Ubuntu nodes on KVM and libvirt that look like two-socket servers (serial numbers, a BIOS version, two NUMA nodes); emulated BMCs that answer IPMI and Redfish; OpenBMC in QEMU as a real BMC firmware; an iPXE server that boots machines from the network; a firmware tool that plays a vendor update tool; and a fault injector that plays the bad disk, the bad cable and the dead BMC.
+Three Ubuntu nodes on KVM and libvirt that report like two-socket servers (serial numbers, a BIOS version, two NUMA nodes); emulated BMCs that answer IPMI and Redfish; OpenBMC in QEMU as real BMC firmware; an iPXE server that boots machines from the network; a firmware tool that plays a vendor update tool; and a fault injector that plays the bad disk, the bad cable and the dead BMC.
 
-Every part is explained, step by step, in Rackbench Explorer: https://rackbench.vercel.app (source: https://github.com/adam-bouafia/rackbench-explorer).
+Rackbench explains every part step by step; this repository is where you do it.
 
 | | |
 |---|---|
-| ![Rackbench Explorer: powering on a server over IPMI, step by step](docs/screenshots/lesson.webp) | ![Rack Shift: reading burn-in results against the test plan](docs/screenshots/rackshift-burnin.webp) |
-| A lesson in Rackbench Explorer: IPMI power-on, packet by packet | Rack Shift, the game: build, cable, test and ship three racks |
+| ![Rackbench: the lab map, the seven chapters and the way in](docs/screenshots/overview.webp) | ![Rack Shift: reading burn-in results against the test plan](docs/screenshots/rackshift-burnin.webp) |
+| Rackbench: the overview, 25 lessons in seven chapters | Rack Shift, the Rackbench game: build, cable, test and ship three racks |
 
 The workflow is the real one; the numbers are not. Not affiliated with any hardware vendor.
 
@@ -51,9 +51,9 @@ Faults: `data-disk-missing`, `slow-data-disk`, `backend-link-down`, `slow-backen
 
 Safety: stress tests and fio run inside the nodes only, and fio writes only to the data disk `/dev/vdb`.
 
-## Keeping the Explorer in step
+## Keeping Rackbench in step
 
-Rackbench Explorer's fault-hunt game mirrors `lab/faults.sh`, and its lessons quote these scripts. When a fault or a script changes here, update the simulator and the lessons in rackbench-explorer.
+The fault hunt and Rack Shift on Rackbench mirror `lab/faults.sh`, and its lessons quote these scripts. When a fault or a script changes here, update the simulator and the lessons in [rackbench](https://github.com/adam-bouafia/rackbench).
 
 ## License
 
