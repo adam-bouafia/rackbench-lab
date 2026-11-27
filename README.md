@@ -9,7 +9,7 @@ Rackbench explains every part step by step; this repository is where you do it.
 | | |
 |---|---|
 | ![Rackbench: the lab map, the seven chapters and the way in](docs/screenshots/overview.webp) | ![Rack Shift: reading burn-in results against the test plan](docs/screenshots/rackshift-burnin.webp) |
-| Rackbench: the overview, 42 lessons in ten chapters | Rack Shift, the Rackbench game: build, cable, test and ship three racks |
+| Rackbench: the overview, 50 lessons in ten chapters | Rack Shift, the Rackbench game: build, cable, test and ship three racks |
 
 The workflow is the real one; the numbers are not. Not affiliated with any hardware vendor.
 
