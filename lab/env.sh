@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Shell helpers for the mini rack. Load them in each terminal with:  source lab/env.sh
 # Type the full commands yourself first (Lab 3). Use these shortcuts once you know what they hide.
 
